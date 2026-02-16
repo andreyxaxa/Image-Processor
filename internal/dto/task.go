@@ -5,4 +5,5 @@ type Task struct {
 	Operation string
 	Width     *int
 	Height    *int
+	Text      *string
 }
