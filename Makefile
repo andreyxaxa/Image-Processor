@@ -2,7 +2,11 @@ BASE_STACK = docker compose -f docker-compose.yml
 GARAGE_SETUP_SCRIPT_WIN = ./scripts/setup-garage-win.sh
 GARAGE_SETUP_SCRIPT_LIN = ./scripts/setup-garage-lin.sh
 
-compose-up: ### Run docker compose
+compose-up-garage: ### Run docker compose(garage)
+	$(BASE_STACK) up --build -d garage
+.PHONY: compose-up-garage
+
+compose-up-all: ### Run docker compose
 	$(BASE_STACK) up --build -d
 .PHONY: compose-up
 
