@@ -46,7 +46,7 @@ Kafka в качестве controller'а слушает топик, забира�
    ```
 3. В корне создайте `garage.toml`, скопируйте туда содержимое [garage.toml.example](https://github.com/andreyxaxa/Image-Processor/blob/main/garage.toml.example):
    ```
-   cp garage.toml garage.toml.example
+   cp garage.toml.example garage.toml
    ```
 4. Запуск S3 Garage, выполните, дождитесь запуска:
    ```
