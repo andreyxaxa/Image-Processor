@@ -125,6 +125,7 @@ func (c *KafkaController) processImage(ctx context.Context, event kafka.Message)
 		Operation: payload.Operation,
 		Width:     payload.Width,
 		Height:    payload.Height,
+		Text:      payload.Text,
 	})
 	if err != nil {
 		return fmt.Errorf("KafkaController - processImage - c.prc.Process: %w", err)
