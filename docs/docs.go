@@ -20,8 +20,7 @@ const docTemplate = `{
                 "description": "Downloads processed image from S3 by key",
                 "produces": [
                     "image/jpeg",
-                    "image/png",
-                    "image/gif"
+                    "image/png"
                 ],
                 "tags": [
                     "images"
@@ -119,7 +118,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "file",
-                        "description": "Image file(jpg, png, gif)",
+                        "description": "Image file(jpg, png)",
                         "name": "file",
                         "in": "formData",
                         "required": true

@@ -63,7 +63,6 @@ paths:
       produces:
       - image/jpeg
       - image/png
-      - image/gif
       responses:
         "200":
           description: OK
@@ -91,7 +90,7 @@ paths:
       description: Uploads image to S3, save metadata to postgres, save metadata to
         outbox(postgres)
       parameters:
-      - description: Image file(jpg, png, gif)
+      - description: Image file(jpg, png)
         in: formData
         name: file
         required: true
