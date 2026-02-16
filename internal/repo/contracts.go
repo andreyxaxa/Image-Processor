@@ -24,4 +24,15 @@ type (
 		Update(ctx context.Context, image *entity.Image) error
 		Delete(ctx context.Context, id uuid.UUID) error
 	}
+
+	OutboxImageMetadataRepo interface {
+		Create(ctx context.Context, event *entity.OutboxEvent) error
+		GetPendingEvents(ctx context.Context, maxRetries int, limit int) ([]*entity.OutboxEvent, error)
+		MarkAsProcessingBatch(ctx context.Context, IDs uuid.UUIDs) error
+		MarkAsProcessedBatch(ctx context.Context, IDs uuid.UUIDs) error
+		MarkAsFailedBatch(ctx context.Context, IDs uuid.UUIDs) error
+		IncrementRetryCountBatch(ctx context.Context, IDs uuid.UUIDs) error
+		MarkMaxRetriesAsFailed(ctx context.Context, maxRetries int) error
+		DeleteOldProcessedAndFailed(ctx context.Context) (int64, error)
+	}
 )
