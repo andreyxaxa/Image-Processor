@@ -105,6 +105,14 @@
             display: none;
         }
 
+        .watermark-params {
+            margin-top: 15px;
+        }
+
+        .watermark-params.hide {
+            display: none;
+        }
+
         button {
             width: 100%;
             padding: 14px;
@@ -263,6 +271,7 @@
                 </select>
             </div>
 
+            <!-- Resize parameters -->
             <div class="resize-params" id="resizeParams">
                 <div class="form-group">
                     <label for="width">Width:</label>
@@ -271,6 +280,14 @@
                 <div class="form-group">
                     <label for="height">Height:</label>
                     <input type="number" id="height" placeholder="Height" min="10" max="10000" value="600">
+                </div>
+            </div>
+
+            <!-- Watermark parameters -->
+            <div class="watermark-params hide" id="watermarkParams">
+                <div class="form-group">
+                    <label for="watermarkText">Watermark Text:</label>
+                    <input type="text" id="watermarkText" placeholder="Enter watermark text" minlength="1" maxlength="64" value="Your Company">
                 </div>
             </div>
 
@@ -319,6 +336,8 @@
         const uploadBtn = document.getElementById('uploadBtn');
         const operation = document.getElementById('operation');
         const resizeParams = document.getElementById('resizeParams');
+        const watermarkParams = document.getElementById('watermarkParams');
+        const watermarkText = document.getElementById('watermarkText');
         const uploadResult = document.getElementById('uploadResult');
         const imageId = document.getElementById('imageId');
         const getBtn = document.getElementById('getBtn');
@@ -361,10 +380,15 @@
 
         // Operation change
         operation.addEventListener('change', (e) => {
+            // Hide all params
+            resizeParams.classList.add('hide');
+            watermarkParams.classList.add('hide');
+            
+            // Show relevant params
             if (e.target.value === 'resize') {
                 resizeParams.classList.remove('hide');
-            } else {
-                resizeParams.classList.add('hide');
+            } else if (e.target.value === 'watermark') {
+                watermarkParams.classList.remove('hide');
             }
         });
 
@@ -379,6 +403,8 @@
             if (operation.value === 'resize') {
                 formData.append('width', document.getElementById('width').value);
                 formData.append('height', document.getElementById('height').value);
+            } else if (operation.value === 'watermark') {
+                formData.append('text', watermarkText.value);
             }
 
             try {
@@ -418,7 +444,7 @@
             } catch (error) {
                 uploadResult.innerHTML = `
                     <div class="error">
-                        ❌ Error: ${error.message}
+                        Error: ${error.message}
                     </div>
                 `;
             } finally {
@@ -434,7 +460,7 @@
             if (!id) {
                 getResult.innerHTML = `
                     <div class="error">
-                        ❌ Please enter an Image ID
+                        Please enter an Image ID
                     </div>
                 `;
                 return;
@@ -469,10 +495,10 @@
                         
                         <div class="button-group">
                             <button class="download-btn" onclick="downloadImage('${id}')">
-                                💾 Download Image
+                                Download Image
                             </button>
                             <button class="delete-btn" onclick="deleteImageInline('${id}')">
-                                🗑️ Delete Image
+                                Delete Image
                             </button>
                         </div>
                     </div>
@@ -484,7 +510,7 @@
             } catch (error) {
                 getResult.innerHTML = `
                     <div class="error">
-                        ❌ Error: ${error.message}
+                        Error: ${error.message}
                     </div>
                 `;
             } finally {
@@ -500,7 +526,7 @@
             if (!id) {
                 deleteResult.innerHTML = `
                     <div class="error">
-                        ❌ Please enter an Image ID
+                        Please enter an Image ID
                     </div>
                 `;
                 return;
@@ -521,7 +547,7 @@
                 if (response.ok) {
                     deleteResult.innerHTML = `
                         <div class="success">
-                            ✓ Image deleted successfully
+                            Image deleted successfully
                         </div>
                     `;
                     deleteImageId.value = '';
@@ -534,7 +560,7 @@
                 } else if (response.status === 404) {
                     deleteResult.innerHTML = `
                         <div class="error">
-                            ❌ Image not found
+                            Image not found
                         </div>
                     `;
                 } else {
@@ -543,7 +569,7 @@
             } catch (error) {
                 deleteResult.innerHTML = `
                     <div class="error">
-                        ❌ Error: ${error.message}
+                        Error: ${error.message}
                     </div>
                 `;
             } finally {
@@ -566,7 +592,7 @@
                 if (response.ok) {
                     getResult.innerHTML = `
                         <div class="success">
-                            ✓ Image deleted successfully
+                            Image deleted successfully
                         </div>
                     `;
                     imageId.value = '';
