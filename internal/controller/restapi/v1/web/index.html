@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Processor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        .upload-zone {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            background: #fafafa;
+            margin-bottom: 20px;
+        }
+
+        .upload-zone.dragover {
+            border-color: #4CAF50;
+            background: #f0f8f0;
+        }
+
+        .file-input-label {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #4CAF50;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+        .file-input-label:hover {
+            background: #45a049;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .form-group {
+            margin: 15px 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        select, input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .resize-params {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .resize-params.hide {
+            display: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background 0.3s;
+            margin-top: 15px;
+        }
+
+        button:hover {
+            background: #1976D2;
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .success-btn {
+            background: #4CAF50;
+        }
+
+        .success-btn:hover {
+            background: #45a049;
+        }
+
+        .delete-btn {
+            background: #F44336;
+        }
+
+        .delete-btn:hover {
+            background: #D32F2F;
+        }
+
+        .download-btn {
+            background: #FF9800;
+        }
+
+        .download-btn:hover {
+            background: #F57C00;
+        }
+
+        .result-box {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .result-box p {
+            margin: 8px 0;
+            font-family: monospace;
+            font-size: 14px;
+        }
+
+        .result-box strong {
+            color: #555;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: #FFF3E0;
+            color: #E65100;
+        }
+
+        .result-image {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        .error {
+            background: #FFEBEE;
+            color: #B71C1C;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #F44336;
+            margin-top: 15px;
+        }
+
+        .info {
+            background: #E3F2FD;
+            color: #1565C0;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #2196F3;
+            margin-top: 15px;
+        }
+
+        .success {
+            background: #E8F5E9;
+            color: #1B5E20;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #4CAF50;
+            margin-top: 15px;
+        }
+
+        .copy-btn {
+            background: #666;
+            padding: 6px 12px;
+            font-size: 12px;
+            margin-left: 10px;
+            display: inline-block;
+            width: auto;
+        }
+
+        .copy-btn:hover {
+            background: #555;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Image Processor</h1>
+
+        <!-- Upload Form -->
+        <div class="card">
+            <h2>1. Upload & Send for Processing</h2>
+            
+            <div class="upload-zone" id="dropZone">
+                <label for="fileInput" class="file-input-label">
+                    📁 Choose Image
+                </label>
+                <input type="file" id="fileInput" accept="image/*">
+                <p style="margin-top: 15px; color: #666;">or drag and drop here</p>
+                <p id="fileName" style="margin-top: 10px; color: #999; font-size: 14px;"></p>
+            </div>
+
+            <div class="form-group">
+                <label for="operation">Operation:</label>
+                <select id="operation">
+                    <option value="resize">Resize</option>
+                    <option value="thumbnail">Thumbnail</option>
+                    <option value="watermark">Watermark</option>
+                </select>
+            </div>
+
+            <div class="resize-params" id="resizeParams">
+                <div class="form-group">
+                    <label for="width">Width:</label>
+                    <input type="number" id="width" placeholder="Width" min="10" max="10000" value="800">
+                </div>
+                <div class="form-group">
+                    <label for="height">Height:</label>
+                    <input type="number" id="height" placeholder="Height" min="10" max="10000" value="600">
+                </div>
+            </div>
+
+            <button id="uploadBtn" disabled>Send for Processing</button>
+
+            <div id="uploadResult"></div>
+        </div>
+
+        <!-- Get Processed Form -->
+        <div class="card">
+            <h2>2. Get Processed Image</h2>
+            
+            <div class="form-group">
+                <label for="imageId">Image ID:</label>
+                <input type="text" id="imageId" placeholder="Paste Image ID here">
+            </div>
+
+            <button id="getBtn" class="success-btn">Get Processed Image</button>
+
+            <div id="getResult"></div>
+        </div>
+
+        <!-- Delete Form -->
+        <div class="card">
+            <h2>3. Delete Image</h2>
+            
+            <div class="form-group">
+                <label for="deleteImageId">Image ID:</label>
+                <input type="text" id="deleteImageId" placeholder="Paste Image ID to delete">
+            </div>
+
+            <button id="deleteBtn" class="delete-btn">Delete Image</button>
+
+            <div id="deleteResult"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8080/v1';
+        
+        let selectedFile = null;
+
+        // Elements
+        const fileInput = document.getElementById('fileInput');
+        const fileName = document.getElementById('fileName');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const operation = document.getElementById('operation');
+        const resizeParams = document.getElementById('resizeParams');
+        const uploadResult = document.getElementById('uploadResult');
+        const imageId = document.getElementById('imageId');
+        const getBtn = document.getElementById('getBtn');
+        const getResult = document.getElementById('getResult');
+        const deleteImageId = document.getElementById('deleteImageId');
+        const deleteBtn = document.getElementById('deleteBtn');
+        const deleteResult = document.getElementById('deleteResult');
+        const dropZone = document.getElementById('dropZone');
+
+        // File selection
+        fileInput.addEventListener('change', (e) => {
+            selectedFile = e.target.files[0];
+            if (selectedFile) {
+                fileName.textContent = `Selected: ${selectedFile.name}`;
+                uploadBtn.disabled = false;
+            }
+        });
+
+        // Drag & Drop
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                selectedFile = files[0];
+                fileName.textContent = `Selected: ${selectedFile.name}`;
+                uploadBtn.disabled = false;
+            }
+        });
+
+        // Operation change
+        operation.addEventListener('change', (e) => {
+            if (e.target.value === 'resize') {
+                resizeParams.classList.remove('hide');
+            } else {
+                resizeParams.classList.add('hide');
+            }
+        });
+
+        // Upload
+        uploadBtn.addEventListener('click', async () => {
+            if (!selectedFile) return;
+
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+            formData.append('operation', operation.value);
+
+            if (operation.value === 'resize') {
+                formData.append('width', document.getElementById('width').value);
+                formData.append('height', document.getElementById('height').value);
+            }
+
+            try {
+                uploadBtn.disabled = true;
+                uploadBtn.textContent = 'Uploading...';
+
+                const response = await fetch(`${API_BASE}/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Upload failed');
+                }
+
+                // Success
+                uploadResult.innerHTML = `
+                    <div class="result-box">
+                        <p><strong>✓ Sent for processing!</strong></p>
+                        <p><strong>Image ID:</strong> ${data.image_id} 
+                            <button class="copy-btn" onclick="copyToClipboard('${data.image_id}')">Copy</button>
+                        </p>
+                        <p><strong>Status:</strong> <span class="status-badge status-pending">${data.status}</span></p>
+                        <p><strong>Operation:</strong> ${data.operation}</p>
+                        <p><strong>File:</strong> ${data.original_name} (${formatBytes(data.size)})</p>
+                        <p style="margin-top: 15px; color: #666; font-size: 13px;">
+                            💡 Copy the Image ID and paste it below to get the processed result
+                        </p>
+                    </div>
+                `;
+
+                // Auto-fill ID in second form
+                imageId.value = data.image_id;
+
+            } catch (error) {
+                uploadResult.innerHTML = `
+                    <div class="error">
+                        ❌ Error: ${error.message}
+                    </div>
+                `;
+            } finally {
+                uploadBtn.disabled = false;
+                uploadBtn.textContent = 'Send for Processing';
+            }
+        });
+
+        // Get processed image
+        getBtn.addEventListener('click', async () => {
+            const id = imageId.value.trim();
+            
+            if (!id) {
+                getResult.innerHTML = `
+                    <div class="error">
+                        ❌ Please enter an Image ID
+                    </div>
+                `;
+                return;
+            }
+
+            try {
+                getBtn.disabled = true;
+                getBtn.textContent = 'Loading...';
+
+                const response = await fetch(`${API_BASE}/image/${id}`);
+
+                if (response.status === 404) {
+                    getResult.innerHTML = `
+                        <div class="info">
+                            ⏳ Image not found or not processed yet. Please wait and try again.
+                        </div>
+                    `;
+                    return;
+                }
+
+                if (!response.ok) {
+                    throw new Error('Failed to load image');
+                }
+
+                // Success - show image
+                const imageUrl = `${API_BASE}/image/${id}?t=${Date.now()}`;
+                
+                getResult.innerHTML = `
+                    <div class="result-box">
+                        <p><strong>✓ Processing completed!</strong></p>
+                        <img src="${imageUrl}" class="result-image" alt="Processed image">
+                        
+                        <div class="button-group">
+                            <button class="download-btn" onclick="downloadImage('${id}')">
+                                💾 Download Image
+                            </button>
+                            <button class="delete-btn" onclick="deleteImageInline('${id}')">
+                                🗑️ Delete Image
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                // Auto-fill delete form
+                deleteImageId.value = id;
+
+            } catch (error) {
+                getResult.innerHTML = `
+                    <div class="error">
+                        ❌ Error: ${error.message}
+                    </div>
+                `;
+            } finally {
+                getBtn.disabled = false;
+                getBtn.textContent = 'Get Processed Image';
+            }
+        });
+
+        // Delete image (from form)
+        deleteBtn.addEventListener('click', async () => {
+            const id = deleteImageId.value.trim();
+            
+            if (!id) {
+                deleteResult.innerHTML = `
+                    <div class="error">
+                        ❌ Please enter an Image ID
+                    </div>
+                `;
+                return;
+            }
+
+            if (!confirm(`Are you sure you want to delete image ${id}?`)) {
+                return;
+            }
+
+            try {
+                deleteBtn.disabled = true;
+                deleteBtn.textContent = 'Deleting...';
+
+                const response = await fetch(`${API_BASE}/image/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    deleteResult.innerHTML = `
+                        <div class="success">
+                            ✓ Image deleted successfully
+                        </div>
+                    `;
+                    deleteImageId.value = '';
+                    
+                    // Clear get result if same ID
+                    if (imageId.value === id) {
+                        getResult.innerHTML = '';
+                        imageId.value = '';
+                    }
+                } else if (response.status === 404) {
+                    deleteResult.innerHTML = `
+                        <div class="error">
+                            ❌ Image not found
+                        </div>
+                    `;
+                } else {
+                    throw new Error('Delete failed');
+                }
+            } catch (error) {
+                deleteResult.innerHTML = `
+                    <div class="error">
+                        ❌ Error: ${error.message}
+                    </div>
+                `;
+            } finally {
+                deleteBtn.disabled = false;
+                deleteBtn.textContent = 'Delete Image';
+            }
+        });
+
+        // Delete image (inline from result)
+        async function deleteImageInline(id) {
+            if (!confirm('Are you sure you want to delete this image?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/image/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    getResult.innerHTML = `
+                        <div class="success">
+                            ✓ Image deleted successfully
+                        </div>
+                    `;
+                    imageId.value = '';
+                    deleteImageId.value = '';
+                } else {
+                    throw new Error('Delete failed');
+                }
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            }
+        }
+
+        // Download image
+        async function downloadImage(id) {
+            try {
+                const imageUrl = `${API_BASE}/image/${id}`;
+                
+                // Fetch image
+                const response = await fetch(imageUrl);
+                if (!response.ok) throw new Error('Download failed');
+                
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                
+                // Create download link
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `processed-${id}.jpg`;
+                document.body.appendChild(a);
+                a.click();
+                
+                // Cleanup
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                
+            } catch (error) {
+                alert(`Download failed: ${error.message}`);
+            }
+        }
+
+        // Copy to clipboard
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Image ID copied to clipboard!');
+            });
+        }
+
+        // Format bytes
+        function formatBytes(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+    </script>
+</body>
+</html>
