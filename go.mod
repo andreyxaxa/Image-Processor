@@ -6,6 +6,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.19.7
 	github.com/google/uuid v1.6.0
 	github.com/rs/zerolog v1.34.0
+	golang.org/x/image v0.0.0-20191009234506-e7c1f5e7dbb8
 )
 
 require (
@@ -37,7 +38,6 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.51.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
-	golang.org/x/image v0.0.0-20191009234506-e7c1f5e7dbb8 // indirect
 	golang.org/x/text v0.29.0 // indirect
 )
 
