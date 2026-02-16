@@ -9,4 +9,5 @@ type ImageEventPayload struct {
 	Operation   string    `json:"operation"`
 	Width       *int      `json:"width,omitempty"`
 	Height      *int      `json:"height,omitempty"`
+	Text        *string   `json:"text,omitempty"`
 }
