@@ -56,15 +56,15 @@ Kafka в качестве controller'а слушает топик, забира�
 
    Для windows:
    ```
-   setup-garage-win
+   make setup-garage-win
    ```
    Для linux:
    ```
-   setup-garage-lin
+   make setup-garage-lin
    ```
 7. Запуск остальных сервисов(postgres, kafka, backend):
    ```
-   compose-up-all
+   make compose-up-all
    ```
 8. Перейдите на http://localhost:8080/v1 и пользуйтесь сервисом.
 <img width="1399" height="976" alt="image" src="https://github.com/user-attachments/assets/1292a068-9b53-4534-8151-f9a7648f3efe" />
