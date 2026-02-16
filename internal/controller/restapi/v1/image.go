@@ -107,6 +107,17 @@ func (r *V1) processImage(ctx *fiber.Ctx) error {
 			Operation: "thumbnail",
 		}
 	case "watermark":
+		// text
+		textStr := ctx.FormValue("text")
+		if textStr == "" {
+			return errorResponse(ctx, http.StatusBadRequest, "text is required for watermark")
+		}
+
+		if len(textStr) < validate.MinTextLen || len(textStr) > validate.MaxTextLen {
+			return errorResponse(ctx, http.StatusBadRequest,
+				fmt.Sprintf("text length must be between %d and %d", validate.MinTextLen, validate.MaxTextLen))
+		}
+
 		op = dto.Operation{
 			Operation: "watermark",
 		}

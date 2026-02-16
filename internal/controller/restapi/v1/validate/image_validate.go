@@ -8,6 +8,9 @@ const (
 
 	MinResizeHeight int = 10
 	MaxResizeHeight int = 10000
+
+	MinTextLen int = 10
+	MaxTextLen int = 64
 )
 
 var (
