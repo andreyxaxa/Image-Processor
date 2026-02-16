@@ -21,7 +21,7 @@ import (
 // @Tags 		images
 // @Accept 		mpfd
 // @Produce 	json
-// @Param 		file 	  formData file   true  "Image file(jpg, png, gif)"
+// @Param 		file 	  formData file   true  "Image file(jpg, png)"
 // @Param 		operation formData string true  "Operation" Enums(resize, thumbnail, watermark)
 // @Param 		text 	  formData string false "Text(required for watermark operation)"
 // @Param 		width 	  formData int    false "Width(required for resize operation)"
@@ -51,13 +51,13 @@ func (r *V1) processImage(ctx *fiber.Ctx) error {
 	// 2. валидация content type
 	contentType := file.Header.Get("Content-Type")
 	if !validate.AllowedContentTypes[contentType] {
-		return errorResponse(ctx, http.StatusUnsupportedMediaType, "unsupported file type. Allowed: jpeg, png, gif")
+		return errorResponse(ctx, http.StatusUnsupportedMediaType, "unsupported file type. Allowed: jpeg, png")
 	}
 
 	// 3. валидация расширения
 	ext := strings.ToLower(filepath.Ext(file.Filename))
 	if !validate.AllowedExtensions[ext] {
-		return errorResponse(ctx, http.StatusUnsupportedMediaType, "unsupported file extension. Allowed: .jpg, .jpeg, .png, .gif")
+		return errorResponse(ctx, http.StatusUnsupportedMediaType, "unsupported file extension. Allowed: .jpg, .jpeg, .png")
 	}
 
 	// 4. валидация операции
@@ -161,7 +161,7 @@ func (r *V1) processImage(ctx *fiber.Ctx) error {
 // @Summary 	Get processed image
 // @Description Downloads processed image from S3 by key
 // @Tags 		images
-// @Produce 	image/jpeg,image/png,image/gif
+// @Produce 	image/jpeg,image/png
 // @Param 		id path string true "Image ID(uuid)"
 // @Success 	200 {file} 	binary
 // @Failure 	400 {object} response.Error "Invalid ID"
