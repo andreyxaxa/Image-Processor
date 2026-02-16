@@ -18,14 +18,12 @@ var (
 		"image/jpeg": true,
 		"image/jpg":  true,
 		"image/png":  true,
-		"image/gif":  true,
 	}
 
 	AllowedExtensions = map[string]bool{
 		".jpg":  true,
 		".jpeg": true,
 		".png":  true,
-		".gif":  true,
 		".webp": true,
 	}
 )

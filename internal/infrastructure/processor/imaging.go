@@ -107,8 +107,6 @@ func encodeImage(img image.Image, contentType string) ([]byte, error) {
 		format = imaging.JPEG
 	case "image/png":
 		format = imaging.PNG
-	case "image/gif":
-		format = imaging.GIF
 	default:
 		format = imaging.JPEG
 	}
