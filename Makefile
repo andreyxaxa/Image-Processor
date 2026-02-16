@@ -3,6 +3,7 @@ GARAGE_SETUP_SCRIPT_WIN = ./scripts/setup-garage-win.sh
 GARAGE_SETUP_SCRIPT_LIN = ./scripts/setup-garage-lin.sh
 
 compose-up-garage: ### Run docker compose(garage)
+	mkdir -p garage/data garage/meta ; \
 	$(BASE_STACK) up --build -d garage
 .PHONY: compose-up-garage
 
