@@ -57,7 +57,7 @@ func (p *ImageProcessor) Thumbnail(ctx context.Context, contentType string, data
 	return res, nil
 }
 
-func (p *ImageProcessor) Watermark(ctx context.Context, contentType string, data []byte) ([]byte, error) {
+func (p *ImageProcessor) Watermark(ctx context.Context, contentType string, data []byte, text string) ([]byte, error) {
 	img, err := decodeImage(data)
 	if err != nil {
 		return nil, fmt.Errorf("ImageProcessor - Watermark - decodeImage: %w", err)
@@ -72,7 +72,6 @@ func (p *ImageProcessor) Watermark(ctx context.Context, contentType string, data
 	}
 
 	bounds := rgba.Bounds()
-	text := "andreyxaxa"
 	textWidth := d.MeasureString(text).Round()
 
 	d.Dot = fixed.P(
