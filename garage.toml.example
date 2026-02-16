@@ -1,0 +1,14 @@
+metadata_dir = "/var/lib/garage/meta"
+data_dir = "/var/lib/garage/data"
+replication_factor = 1
+
+rpc_secret = "87b26fc5a89f07c9d125fcf58f815e3997b1f59ba2146ebc6db73afe90d8774c"
+rpc_bind_addr = "0.0.0.0:3901"
+
+[s3_api]
+api_bind_addr = "0.0.0.0:3900"
+s3_region = "garage"
+
+[admin]
+api_bind_addr = "0.0.0.0:3903"
+admin_token = "sUp3R_s3cR37_4Dmin_t0ken"
