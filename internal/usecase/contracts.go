@@ -31,4 +31,8 @@ type (
 		MarkMaxRetriesAsFailed(ctx context.Context, maxRetries int) error
 		CleanupOutbox(ctx context.Context) error
 	}
+
+	ImageProcessorUseCase interface {
+		Process(ctx context.Context, contentType string, task dto.Task) ([]byte, error)
+	}
 )
