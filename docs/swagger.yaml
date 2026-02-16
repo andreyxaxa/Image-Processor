@@ -105,6 +105,10 @@ paths:
         name: operation
         required: true
         type: string
+      - description: Text(required for watermark operation)
+        in: formData
+        name: text
+        type: string
       - description: Width(required for resize operation)
         in: formData
         name: width

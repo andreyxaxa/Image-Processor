@@ -137,6 +137,12 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "string",
+                        "description": "Text(required for watermark operation)",
+                        "name": "text",
+                        "in": "formData"
+                    },
+                    {
                         "type": "integer",
                         "description": "Width(required for resize operation)",
                         "name": "width",
