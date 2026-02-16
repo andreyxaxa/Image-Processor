@@ -121,6 +121,7 @@ func (r *V1) processImage(ctx *fiber.Ctx) error {
 
 		op = dto.Operation{
 			Operation: "watermark",
+			Text:      &textStr,
 		}
 	default:
 		return errorResponse(ctx, http.StatusBadRequest, "invalid operation. Allowed: resize, thumbnail, watermark")
@@ -182,7 +183,7 @@ func (r *V1) getProcessedImage(ctx *fiber.Ctx) error {
 	processedKey, contentType, err := r.img.GetProcessedKeyByID(ctx.UserContext(), id)
 	if err != nil {
 		if errors.Is(err, errs.ErrRecordNotFound) {
-			return errorResponse(ctx, http.StatusNotFound, "image not found")
+			return errorResponse(ctx, http.StatusNotFound, "image not found or not processed yet")
 		}
 		r.logger.Error(err, "restapi - v1 - getProcessedImage")
 
