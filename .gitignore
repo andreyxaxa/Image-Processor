@@ -1,0 +1,8 @@
+# Config
+.env
+
+# IDE
+.vscode
+
+# Binaries
+*.exe
