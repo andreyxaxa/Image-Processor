@@ -1,0 +1,106 @@
+services:
+  garage:
+    image: dxflrs/garage:v2.2.0
+    container_name: garaged-image-processor
+    env_file: .env
+    environment:
+      - GARAGE_RPC_SECRET=${GARAGE_RPC_SECRET}
+    volumes:
+      - ./garage.toml:/etc/garage.toml
+      - ./garage/meta:/var/lib/garage/meta
+      - ./garage/data:/var/lib/garage/data
+    ports:
+      - "3900:3900"
+      - "3901:3901"
+      - "3902:3902"
+      - "3903:3903"
+
+  db:
+    container_name: db-image-processor
+    image: postgres:18.1-alpine
+    environment:
+      POSTGRES_SLL_MODE: "disable"
+      POSTGRES_HOST: "db"
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: "image_processor_db"
+      POSTGRES_USER: "user"
+      POSTGRES_PASSWORD: "sUp3RP4sSw0rD"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d image_processor_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  
+  migrate:
+    container_name: migrates-image-processor
+    image: migrate/migrate
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./migrations:/migrations
+    entrypoint: ["migrate",
+      "-path", "./migrations",
+      "-database", "postgres://user:sUp3RP4sSw0rD@db:5432/image_processor_db?sslmode=disable",
+      "up"
+    ]
+      
+  kafka:
+    container_name: kafka-image-processor
+    image: apache/kafka:4.1.1
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,CONTROLLER://kafka:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost:9092 || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "9092:9092"
+
+  create-kafka-topic:
+    image: apache/kafka:4.1.1
+    depends_on:
+      kafka:
+        condition: service_healthy
+    entrypoint: ["bin/sh", "-c"]
+    command: >
+      "/opt/kafka/bin/kafka-topics.sh
+      --bootstrap-server kafka:9092
+      --create
+      --topic image.events"
+
+  app:
+    container_name: image-processor-v1
+    build: .
+    env_file: .env
+    depends_on:
+      kafka:
+        condition: service_healthy
+      create-kafka-topic:
+        condition: service_completed_successfully
+      garage:
+        condition: service_started
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    ports:
+      - "8080:8080"
+
+volumes:
+  db_data:
