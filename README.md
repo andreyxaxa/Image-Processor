@@ -1,7 +1,7 @@
-# Image Processor — очередь фоновой обработки изображений
+# Image Processor - очередь фоновой обработки изображений
 Cервис принимает изображения, кладёт задачу на обработку в очередь (Apache Kafka), в фоне обрабатывает файл (resize, watermark, thumbnail). 
 
-[Старт]()
+[Старт](https://github.com/andreyxaxa/Image-Processor?tab=readme-ov-file#%D0%B7%D0%B0%D0%BF%D1%83%D1%81%D0%BA)
 
 ## Обзор
 
