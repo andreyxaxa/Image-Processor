@@ -23,6 +23,7 @@ import (
 // @Produce 	json
 // @Param 		file 	  formData file   true  "Image file(jpg, png, gif)"
 // @Param 		operation formData string true  "Operation" Enums(resize, thumbnail, watermark)
+// @Param 		text 	  formData string false "Text(required for watermark operation)"
 // @Param 		width 	  formData int    false "Width(required for resize operation)"
 // @Param 		height 	  formData int 	  false "Height(required for resize operation)"
 // @Success 	201 {object} response.ProcessImage
