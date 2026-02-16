@@ -5,5 +5,8 @@
 # IDE
 .vscode
 
+# Data
+garage
+
 # Binaries
 *.exe
