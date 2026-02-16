@@ -15,6 +15,8 @@ Kafka в качестве controller'а слушает топик, забира�
 
 Поддерживаемые форматы - .jpg .jpeg .png .webp
 
+Видео запуска и работы - https://drive.google.com/file/d/1KgmaMPTDyw14cH_3X2S7K_lSqsyngBMU/view
+
 - UI - http://localhost:8080/v1
 - Документация API - Swagger - http://localhost:8080/swagger
 - Конфиг - [config/config.go](https://github.com/andreyxaxa/Image-Processor/blob/main/config/config.go). Читается из `.env` файла.
