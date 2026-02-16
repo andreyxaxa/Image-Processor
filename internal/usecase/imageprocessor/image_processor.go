@@ -31,7 +31,7 @@ func (uc *ImageProcessorUseCase) Process(ctx context.Context, contentType string
 	case resize:
 		result, err = uc.p.Resize(ctx, contentType, task.Data, *task.Width, *task.Height)
 	case watermark:
-		result, err = uc.p.Watermark(ctx, contentType, task.Data)
+		result, err = uc.p.Watermark(ctx, contentType, task.Data, *task.Text)
 	case thumbnail:
 		result, err = uc.p.Thumbnail(ctx, contentType, task.Data)
 	default:
