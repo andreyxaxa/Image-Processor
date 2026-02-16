@@ -35,4 +35,8 @@ type (
 		MarkMaxRetriesAsFailed(ctx context.Context, maxRetries int) error
 		DeleteOldProcessedAndFailed(ctx context.Context) (int64, error)
 	}
+
+	Transactor interface {
+		WithinTransaction(ctx context.Context, f func(ctx context.Context) error) error
+	}
 )
