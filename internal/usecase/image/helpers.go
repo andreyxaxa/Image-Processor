@@ -23,6 +23,7 @@ func (uc *ImageUseCase) createOutboxEvent(
 		"operation":    operation.Operation,
 		"width":        operation.Width,
 		"height":       operation.Height,
+		"text":         operation.Text,
 	}
 
 	b, err := json.Marshal(payload)
