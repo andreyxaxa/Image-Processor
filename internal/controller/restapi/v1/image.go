@@ -16,6 +16,21 @@ import (
 	"github.com/google/uuid"
 )
 
+// @Summary  	Upload and process image
+// @Description Uploads image to S3, save metadata to postgres, save metadata to outbox(postgres)
+// @Tags 		images
+// @Accept 		mpfd
+// @Produce 	json
+// @Param 		file 	  formData file   true  "Image file(jpg, png, gif)"
+// @Param 		operation formData string true  "Operation" Enums(resize, thumbnail, watermark)
+// @Param 		width 	  formData int    false "Width(required for resize operation)"
+// @Param 		height 	  formData int 	  false "Height(required for resize operation)"
+// @Success 	201 {object} response.ProcessImage
+// @Failure 	400 {object} response.Error "Empty file or wrong parameters"
+// @Failure 	413 {object} response.Error "File too large"
+// @Failure 	415 {object} response.Error "Unsupported format"
+// @Failure 	500 {object} response.Error "Internal"
+// @Router 		/v1/upload [post]
 func (r *V1) processImage(ctx *fiber.Ctx) error {
 	file, err := ctx.FormFile("file")
 	if err != nil {
@@ -130,6 +145,16 @@ func (r *V1) processImage(ctx *fiber.Ctx) error {
 	return ctx.Status(http.StatusCreated).JSON(resp)
 }
 
+// @Summary 	Get processed image
+// @Description Downloads processed image from S3 by key
+// @Tags 		images
+// @Produce 	image/jpeg,image/png,image/gif
+// @Param 		id path string true "Image ID(uuid)"
+// @Success 	200 {file} 	binary
+// @Failure 	400 {object} response.Error "Invalid ID"
+// @Failure 	404 {object} response.Error "Image not found"
+// @Failure 	500 {object} response.Error "Internal"
+// @Router 		/v1/image/{id} [get]
 func (r *V1) getProcessedImage(ctx *fiber.Ctx) error {
 	idStr := ctx.Params("id")
 
@@ -162,6 +187,15 @@ func (r *V1) getProcessedImage(ctx *fiber.Ctx) error {
 	return ctx.SendStream(body)
 }
 
+// @Summary 	Delete image
+// @Description Deletes image from all storages(S3, postgres(main table + outbox(cascade)))
+// @Tags 		images
+// @Param		id 	path	 string true "Image ID(uuid)"
+// @Success		204 "Deleted"
+// @Failure 	400 {object} response.Error "Invalid ID"
+// @Failure 	404 {object} response.Error "Image not found"
+// @Failure 	500 {object} response.Error "Internal"
+// @Router 		/v1/image/{id} [delete]
 func (r *V1) deleteImage(ctx *fiber.Ctx) error {
 	idStr := ctx.Params("id")
 

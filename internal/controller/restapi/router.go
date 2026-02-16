@@ -7,6 +7,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// @title Image processor
+// @version 1.0.0
+// @host localhost:8080
+// @BasePath /v1
 func NewRouter(app *fiber.App, img usecase.ImageUseCase, l logger.Interface) {
 	// Routers
 	apiV1Group := app.Group("/v1")
