@@ -2,6 +2,7 @@ package restapi
 
 import (
 	"github.com/andreyxaxa/Image-Processor/config"
+	_ "github.com/andreyxaxa/Image-Processor/docs" // Swagger docs.
 	v1 "github.com/andreyxaxa/Image-Processor/internal/controller/restapi/v1"
 	"github.com/andreyxaxa/Image-Processor/internal/usecase"
 	"github.com/andreyxaxa/Image-Processor/pkg/logger"
