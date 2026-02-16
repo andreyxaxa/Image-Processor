@@ -2,7 +2,7 @@
 set -e
 
 source .env
-sleep 1
+sleep 20
 
 CONTAINER="garaged-image-processor"
 
