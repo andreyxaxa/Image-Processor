@@ -112,7 +112,7 @@ func (r *OutboxRelay) processEventsBatch(ctx context.Context) {
 	err = r.es.SendEvents(ctx, events)
 	if err != nil {
 		r.logger.Error(err, "OutboxRelay - processEventsBatch - r.es.SendEvents")
-		// 3.1 если не получилось - увеличиваем счетчик ретраев + возвращаем статус в processing
+		// 3.1 если не получилось - увеличиваем счетчик ретраев + возвращаем статус в pending
 		incErr := r.img.IncrementRetryCountBatch(ctx, events)
 		if incErr != nil {
 			r.logger.Error(incErr, "OutboxRelay - processEventsBatch - r.img.IncrementRetryCountBatch")

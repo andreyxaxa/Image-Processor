@@ -229,7 +229,7 @@ func (r *OutboxImageMetadataRepo) IncrementRetryCountBatch(ctx context.Context, 
 	sql, args, err := r.Builder.
 		Update(outboxTable).
 		Set(outboxRetryCountColumn, squirrel.Expr(outboxRetryCountColumn+" + 1")).
-		Set(outboxStatusColumn, entity.Processing).
+		Set(outboxStatusColumn, entity.Pending).
 		Where(squirrel.Eq{outboxIDColumn: IDs}).
 		ToSql()
 	if err != nil {
